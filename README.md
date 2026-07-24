@@ -1,61 +1,98 @@
-# My Application
+# issue-tracker — Gestor de incidencias
 
-A Spring Boot + Vaadin project. Build your UI in pure Java — no HTML, no JavaScript.
+Aplicación local y personal para gestionar incidencias de trabajo por proyecto (sustituye la
+gestión en documentos Word). Interfaz en español; UI en Java con Vaadin Flow.
 
-> **New to Vaadin?** The 5-minute [Quickstart](https://vaadin.com/quickstart) walks you from here to your first running app, a live code change, and an AI-assisted edit with Copilot.
+## Stack
 
----
+- Java 21
+- Spring Boot 4.1
+- Vaadin 25 Flow
+- Maven
+- Spring Data JPA + Hibernate
+- H2 (base de datos en fichero)
+- JUnit 5 + AssertJ (tests)
 
-## Fastest start — no plugin needed
+## Requisitos
 
-From the project folder:
+- **JDK 21** (imprescindible). En esta máquina hay un JDK 21 en `C:\Program Files\Java\jdk-21`;
+  el `java` del PATH puede ser otra versión, así que conviene fijar `JAVA_HOME` a JDK 21.
+- No hace falta instalar Maven: se usa el wrapper (`mvnw.cmd` en Windows).
 
-```bash
-./mvnw spring-boot:run        # Windows: mvnw.cmd spring-boot:run
+## Cómo ejecutar
+
+### Desde IntelliJ IDEA
+1. Abrir el proyecto e indicar el **SDK del proyecto = 21** (File → Project Structure → Project SDK).
+2. Ejecutar la clase `com.nahuel.issuetracker.IssueTrackerApplication`.
+3. Para recarga en caliente de cambios Java: instalar el plugin **Vaadin** y arrancar con
+   **"Debug using HotswapAgent"**.
+
+### Con Maven (línea de comandos, PowerShell)
+```powershell
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"
+.\mvnw.cmd spring-boot:run
 ```
+La aplicación abre en **http://localhost:5555**.
 
-Then open **http://localhost:8080**.
-
-The first start takes ~30 seconds while Maven downloads dependencies.
-
-> **Port 8080 already in use?** Stop the other process, or set `server.port=8081` in `src/main/resources/application.properties` and open that port instead.
->
-> **To stop the app:** press `Ctrl+C` in the terminal (or the red Stop button if you launched from your IDE).
-
-## Optional upgrade — instant hotswap
-
-Running with `spring-boot:run` works, but Java code changes need a server restart. For **live reload** — edit Java, see it in the browser without restarting — install the **Vaadin plugin** and start the app through it:
-
-- **IntelliJ IDEA:** install *Vaadin* from the JetBrains Marketplace → **Debug using Hotswap Agent** (dropdown next to Run). *Just installed it? Let IntelliJ finish indexing, or restart it, if the menu item isn't there yet.*
-- **VS Code:** install the *Vaadin* extension → **Vaadin: Debug using Hotswap Agent** from the command palette.
-- **Eclipse:** install the *Vaadin* plugin → right-click the project → **Run As → Vaadin Application**.
-
-This is what makes the edit-and-see-it loop feel instant — and it's required for the AI edits in [Vaadin Copilot](https://vaadin.com/docs/latest/tools/copilot).
-
----
-
-## Ask your AI assistant about Vaadin (optional)
-
-If you use Claude Code, Cursor, or another AI coding assistant, connect it to the **Vaadin MCP server** so it answers against real Vaadin docs and the exact API of your installed version — instead of guessing from outdated training data.
-
-```bash
-# One-time setup — see https://vaadin.com/docs/latest/building-apps/mcp
+### Generar el JAR ejecutable
+```powershell
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"
+.\mvnw.cmd clean package
 ```
+Genera `target\issue-tracker-1.0.0.jar` (incluye el frontend compilado en modo producción).
 
-A `.mcp.json` is included (commented out by default). Uncomment it, or run the setup command above, to activate.
-
----
-
-## Build for production
-
-```bash
-./mvnw package
-java -jar target/*.jar
+### Ejecutar el JAR
+```powershell
+& "C:\Program Files\Java\jdk-21\bin\java.exe" -jar target\issue-tracker-1.0.0.jar
 ```
+Abre en **http://localhost:5555**.
 
-## Learn more
+### Acceso directo (Windows)
+Hay un lanzador `arrancar-gestor.cmd` en la raíz del proyecto que ejecuta el JAR con JDK 21 y abre el
+navegador. Existe además un acceso directo **"Gestor de incidencias"** en el Escritorio que lo lanza.
+Al cerrar la ventana del lanzador se detiene la aplicación. (Requiere haber generado el JAR con
+`mvnw.cmd clean package`.)
 
-- [Vaadin Quickstart](https://vaadin.com/quickstart) — the 5-minute getting-started path
-- [Components](https://vaadin.com/docs/latest/components) — 50+ UI components, all callable from Java
-- [Vaadin Copilot](https://vaadin.com/docs/latest/tools/copilot) — visual + AI editing in the browser
-- [Full documentation](https://vaadin.com/docs)
+## Base de datos
+
+- H2 en fichero, en la carpeta **`./data`** del proyecto (`jdbc:h2:file:./data/issue-tracker`).
+- Los datos persisten entre reinicios. El esquema se crea/actualiza solo (`ddl-auto=update`).
+- Consola web de H2 en **/h2-console** (usuario `nahuel`, sin contraseña).
+- La aplicación arranca **sin datos**: no se crea ningún proyecto de ejemplo. Crea tus proyectos desde la propia interfaz ("Añadir proyecto").
+
+### Copia de seguridad
+1. **Detener** la aplicación.
+2. Copiar la carpeta **`./data`** completa a un lugar seguro.
+
+### Restaurar
+1. Detener la aplicación.
+2. Sustituir la carpeta **`./data`** por la copia guardada.
+3. Arrancar de nuevo.
+
+## Estructura funcional
+
+- **Proyectos**: crear/editar/activar/desactivar (sin borrado físico). Selector en la cabecera;
+  gestión en **Proyectos**.
+- **Sprints por proyecto**: crear con fechas; el "sprint actual" es el que incluye la fecha de hoy.
+  Gestión en **Sprints**.
+- **Incidencias** (vista principal): listado con filtros (búsqueda, estado, prioridad, categoría,
+  sprint, tipo, asignada, "sólo abiertas"), columnas por bloques (Desarrollo / Ubicación / Pruebas),
+  coloreado por estado y sprint, y tooltip (icono ℹ) con el histórico de entradas.
+- **Detalle de incidencia**: datos principales (código, título, categoría, tipo, asignada, estado,
+  prioridad, referencia, sprint y planificación), evolución (checkboxes), resumen (horas totales,
+  fechas, últimos despliegues PRE/PRO), seguimiento cronológico (entradas con horas) y
+  resolución/pruebas. Cerrar/reabrir incidencia.
+
+## Tests
+
+```powershell
+$env:JAVA_HOME="C:\Program Files\Java\jdk-21"
+.\mvnw.cmd "-Dvaadin.skip=true" test
+```
+Tests de la lógica de negocio (servicios) con H2 en memoria, aislados de `./data`.
+
+## Limitaciones actuales (fuera de alcance)
+
+Sin autenticación/usuarios, adjuntos, exportación a Word/Excel, integraciones (Jira/GitLab),
+notificaciones, API REST, Docker ni despliegue en servidor. Es una herramienta de escritorio local
+optimizada para tema claro.

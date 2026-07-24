@@ -12,3 +12,10 @@
 node_modules/
 src/main/frontend/generated/
 vite.generated.ts
+
+# Base de datos H2 local (incidencias reales) — nunca subir
+/data/
+
+# Documentación interna de trabajo (no se publica; queda en local)
+/CLAUDE.md
+/docs/
