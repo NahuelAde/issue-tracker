@@ -83,6 +83,50 @@ vaadin-tooltip::part(content) {
     overflow: auto;
 }
 
+/* Botón "Gestor de incidencias" de la cabecera (MainLayout): distintivo y llamativo, con
+   icono de llave fija, mayúsculas y una ligera animación al pasar el ratón.
+   IMPORTANTE: vaadin-button pinta su fondo/texto dentro de su shadow DOM a partir de las
+   propiedades de estilo oficiales (--vaadin-button-*), no de "background"/"color" a secas;
+   por eso la primera versión con "background"/"color" directos apenas se veía (el shadow
+   DOM del botón lo tapaba con su fondo por defecto). Ver la documentación de estilos de
+   Button en el MCP de Vaadin. */
+.app-title-button {
+    --vaadin-button-background: #0d2436;
+    --vaadin-button-text-color: #ffffff;
+    --vaadin-button-border-width: 0px;
+    --vaadin-button-border-radius: 0.75rem;
+    --vaadin-button-font-size: 1.05rem;
+    --vaadin-button-font-weight: 800;
+    --vaadin-button-padding: 0.55rem 1.35rem;
+    --vaadin-button-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    font-family: 'Segoe UI Semibold', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: transform 0.15s ease;
+}
+
+.app-title-button:hover {
+    transform: translateY(-1px);
+    --vaadin-button-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Cabecera del detalle de la incidencia: pequeña, con el texto centrado y el fondo a todo
+   lo ancho, en un marco levemente más oscuro que el fondo general (superficie "recesada"
+   de Aura, nivel -1: ver la documentación de color de Aura en el MCP de Vaadin). */
+.incident-heading {
+    --aura-surface-level: -1;
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: var(--aura-surface-color);
+    border: 1px solid var(--vaadin-border-color-secondary, #ccc);
+    border-radius: var(--vaadin-radius-m, 0.5rem);
+    padding: 0.3rem 1.25rem;
+    font-size: 1rem;
+    color: var(--aura-accent-color);
+}
+
 /* Tarjeta del resumen en el detalle de la incidencia. */
 .incident-summary {
     border: 1px solid var(--vaadin-border-color, #e0e0e0);

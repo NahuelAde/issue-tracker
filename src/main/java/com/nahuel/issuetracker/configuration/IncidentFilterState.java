@@ -1,7 +1,6 @@
 package com.nahuel.issuetracker.configuration;
 
 import com.nahuel.issuetracker.enums.IncidentPriority;
-import com.nahuel.issuetracker.enums.IncidentStatus;
 import com.nahuel.issuetracker.enums.IncidentType;
 import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import org.springframework.stereotype.Component;
@@ -18,13 +17,16 @@ import java.io.Serializable;
 public class IncidentFilterState implements Serializable {
 
     private String searchText;
-    private IncidentStatus status;
+    /** "OPEN" (agregado "Abiertas"), el nombre de un {@code IncidentStatus}, o null (sin
+     * filtrar). Sustituye a los antiguos campos separados {@code status} y {@code onlyOpen}. */
+    private String statusFilter = "OPEN";
     private IncidentPriority priority;
     private String category;
     private Long sprintId;
     private IncidentType type;
     private String assignee;
-    private boolean onlyOpen = true;
+    private Long excludeSprintId;
+    private String developmentPhase;
 
     public String getSearchText() {
         return searchText;
@@ -34,12 +36,12 @@ public class IncidentFilterState implements Serializable {
         this.searchText = searchText;
     }
 
-    public IncidentStatus getStatus() {
-        return status;
+    public String getStatusFilter() {
+        return statusFilter;
     }
 
-    public void setStatus(IncidentStatus status) {
-        this.status = status;
+    public void setStatusFilter(String statusFilter) {
+        this.statusFilter = statusFilter;
     }
 
     public IncidentPriority getPriority() {
@@ -82,11 +84,19 @@ public class IncidentFilterState implements Serializable {
         this.assignee = assignee;
     }
 
-    public boolean isOnlyOpen() {
-        return onlyOpen;
+    public Long getExcludeSprintId() {
+        return excludeSprintId;
     }
 
-    public void setOnlyOpen(boolean onlyOpen) {
-        this.onlyOpen = onlyOpen;
+    public void setExcludeSprintId(Long excludeSprintId) {
+        this.excludeSprintId = excludeSprintId;
+    }
+
+    public String getDevelopmentPhase() {
+        return developmentPhase;
+    }
+
+    public void setDevelopmentPhase(String developmentPhase) {
+        this.developmentPhase = developmentPhase;
     }
 }

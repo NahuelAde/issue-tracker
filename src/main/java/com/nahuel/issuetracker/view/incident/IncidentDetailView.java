@@ -135,6 +135,7 @@ public class IncidentDetailView extends VerticalLayout
         this.sprintService = sprintService;
         this.currentProject = currentProject;
         setSizeFull();
+        heading.addClassNames("aura-surface", "incident-heading");
         add(heading, buildMainData(), buildEvolution(), buildSummary(), newHint,
                 buildEntries(), buildResolutionTests(), buildActions());
         bindFields();
@@ -366,7 +367,7 @@ public class IncidentDetailView extends VerticalLayout
                 goToList();
                 return;
             }
-            heading.setText("Incidencia " + incident.getCode());
+            heading.setText(Formats.identifier(incident));
         }
         projectField.setValue(incident.getProject().getName());
         sprint.setItems(sprintService.findByProject(incident.getProject()));
@@ -463,7 +464,7 @@ public class IncidentDetailView extends VerticalLayout
         }
         try {
             incident = incidentService.save(incident);
-            heading.setText("Incidencia " + incident.getCode());
+            heading.setText(Formats.identifier(incident));
             projectField.setValue(incident.getProject().getName());
             sprint.setItems(sprintService.findByProject(incident.getProject()));
             binder.readBean(incident);

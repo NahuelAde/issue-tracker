@@ -13,11 +13,11 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Layout;
-import com.vaadin.flow.router.RouterLink;
 
 import java.util.List;
 
@@ -44,12 +44,13 @@ public class MainLayout extends AppLayout {
     }
 
     private HorizontalLayout createHeader() {
-        H1 appTitle = new H1("Gestor de incidencias");
-        appTitle.getStyle().set("font-size", "1.125rem").set("margin", "0");
-        RouterLink homeLink = new RouterLink();
-        homeLink.setRoute(IncidentListView.class);
-        homeLink.add(appTitle);
-        homeLink.getStyle().set("text-decoration", "none").set("color", "inherit");
+        Icon wrenchIcon = VaadinIcon.WRENCH.create();
+        wrenchIcon.getStyle().set("color", "#ffffff");
+
+        Button homeLink = new Button("Gestor de incidencias",
+                e -> UI.getCurrent().navigate(IncidentListView.class));
+        homeLink.setIcon(wrenchIcon);
+        homeLink.addClassName("app-title-button");
 
         projectSelector.setPlaceholder("Selecciona un proyecto");
         projectSelector.setItemLabelGenerator(Project::getName);

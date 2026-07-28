@@ -1,7 +1,7 @@
 # issue-tracker — Gestor de incidencias
 
-Aplicación local y personal para gestionar incidencias de trabajo por proyecto (sustituye la
-gestión en documentos Word). Interfaz en español; UI en Java con Vaadin Flow.
+Aplicación local y personal para gestionar incidencias de trabajo por proyecto, con seguimiento
+cronológico, horas y sprints. Interfaz en español; UI en Java con Vaadin Flow.
 
 ## Stack
 
@@ -93,6 +93,6 @@ Tests de la lógica de negocio (servicios) con H2 en memoria, aislados de `./dat
 
 ## Limitaciones actuales (fuera de alcance)
 
-Sin autenticación/usuarios, adjuntos, exportación a Word/Excel, integraciones (Jira/GitLab),
+Sin autenticación/usuarios, adjuntos, exportación de documentos, integraciones (Jira/GitLab),
 notificaciones, API REST, Docker ni despliegue en servidor. Es una herramienta de escritorio local
 optimizada para tema claro.

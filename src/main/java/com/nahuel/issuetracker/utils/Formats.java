@@ -1,5 +1,7 @@
 package com.nahuel.issuetracker.utils;
 
+import com.nahuel.issuetracker.entity.Incident;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,5 +34,15 @@ public final class Formats {
 
     public static String hours(BigDecimal value) {
         return value == null ? "—" : String.format(ES, "%.2f", value);
+    }
+
+    /** "Código Categoría: Título", o "Código: Título" si no hay categoría. Identificador
+     * completo de la incidencia, pensado para copiarlo tal cual a otros sistemas. */
+    public static String identifier(Incident incident) {
+        String category = incident.getCategory();
+        if (category == null || category.isBlank()) {
+            return incident.getCode() + ": " + incident.getTitle();
+        }
+        return incident.getCode() + " " + category + ": " + incident.getTitle();
     }
 }
