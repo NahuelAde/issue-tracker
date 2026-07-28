@@ -88,13 +88,16 @@ vaadin-tooltip::part(content) {
    IMPORTANTE: vaadin-button pinta su fondo/texto dentro de su shadow DOM a partir de las
    propiedades de estilo oficiales (--vaadin-button-*), no de "background"/"color" a secas;
    por eso la primera versión con "background"/"color" directos apenas se veía (el shadow
-   DOM del botón lo tapaba con su fondo por defecto). Ver la documentación de estilos de
-   Button en el MCP de Vaadin. */
+   DOM del botón lo tapaba con su fondo por defecto). Por el mismo motivo, subir solo el
+   padding vertical no lo hacía más alto: Aura fija una altura de botón mediante
+   --vaadin-button-height, que manda sobre el padding; hay que tocar esa propiedad
+   directamente. Ver la documentación de estilos de Button en el MCP de Vaadin. */
 .app-title-button {
     --vaadin-button-background: #0d2436;
     --vaadin-button-text-color: #ffffff;
     --vaadin-button-border-width: 0px;
     --vaadin-button-border-radius: 0.75rem;
+    --vaadin-button-height: 3.2rem;
     --vaadin-button-font-size: 1.05rem;
     --vaadin-button-font-weight: 800;
     --vaadin-button-padding: 0.55rem 1.35rem;
