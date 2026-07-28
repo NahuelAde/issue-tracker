@@ -9,6 +9,8 @@ public enum IncidentEntryType {
     ANALYSIS("Análisis"),
     DEVELOPMENT("Desarrollo"),
     CLIENT_COMMENT("Comentario del cliente"),
+    MESSAGE_TO_CLIENT("Mensaje al cliente"),
+    MESSAGE_FROM_CLIENT("Mensaje del cliente"),
     INTERNAL_COMMENT("Comentario interno"),
     LOCAL_TEST("Prueba en local"),
     PRE_TEST("Prueba en PRE"),
