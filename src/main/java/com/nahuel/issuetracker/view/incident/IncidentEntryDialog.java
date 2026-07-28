@@ -41,7 +41,7 @@ public class IncidentEntryDialog extends Dialog {
 
     public IncidentEntryDialog() {
         setDraggable(true);
-        setWidth("34rem");
+        setWidth("42rem");
 
         entryDate.setI18n(new DatePicker.DatePickerI18n().setDateFormat("dd/MM/yyyy"));
         entryDate.setRequiredIndicatorVisible(true);
@@ -61,7 +61,7 @@ public class IncidentEntryDialog extends Dialog {
         hours.setHelperText("Opcional, admite fracciones (0,5 · 1,25)");
 
         description.setMaxLength(4000);
-        description.setHeight("10rem");
+        description.setHeight("13rem");
         description.setRequiredIndicatorVisible(true);
 
         binder.forField(entryDate).asRequired("La fecha es obligatoria").bind("entryDate");
@@ -76,6 +76,8 @@ public class IncidentEntryDialog extends Dialog {
 
         FormLayout form = new FormLayout(entryDate, entryType, environment, hours,
                 frontendVersion, backendVersion, description);
+        // Dos columnas fijas: Fecha/Tipo · Entorno/Horas · Versión front/Versión back.
+        form.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 2));
         form.setColspan(description, 2);
         add(form);
 
