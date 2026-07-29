@@ -36,6 +36,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -212,16 +213,16 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
                 .setFlexGrow(0).setTextAlign(com.vaadin.flow.component.grid.ColumnTextAlign.CENTER);
         grid.addColumn(this::sprintName).setHeader("Sprint").setAutoWidth(true).setFlexGrow(0);
 
-        Grid.Column<Incident> cE = addBoolColumn("E", Incident::isStarted);
-        Grid.Column<Incident> cT = addBoolColumn("T", Incident::isFinished);
-        Grid.Column<Incident> cL = addBoolColumn("L", Incident::isTestedLocal);
-        Grid.Column<Incident> cPre = addBoolColumn("PRE", Incident::isTestedPre);
-        Grid.Column<Incident> cF = addBoolColumn("F", Incident::isFrontendAffected);
-        Grid.Column<Incident> cB = addBoolColumn("B", Incident::isBackendAffected);
-        Grid.Column<Incident> cC = addBoolColumn("C", Incident::isConfigurationAffected);
-        Grid.Column<Incident> cS = addBoolColumn("S", Incident::isDatabaseAffected);
-        Grid.Column<Incident> cCp = addBoolColumn("CP", Incident::isTestCasesDone);
-        Grid.Column<Incident> cEv = addBoolColumn("EV", Incident::isTestEvidenceDone);
+        Grid.Column<Incident> cE = addBoolColumn("E", "Empezada", Incident::isStarted);
+        Grid.Column<Incident> cT = addBoolColumn("T", "Terminada", Incident::isFinished);
+        Grid.Column<Incident> cL = addBoolColumn("L", "Probada local", Incident::isTestedLocal);
+        Grid.Column<Incident> cPre = addBoolColumn("PRE", "Probada PRE", Incident::isTestedPre);
+        Grid.Column<Incident> cF = addBoolColumn("F", "Frontend", Incident::isFrontendAffected);
+        Grid.Column<Incident> cB = addBoolColumn("B", "Backend", Incident::isBackendAffected);
+        Grid.Column<Incident> cC = addBoolColumn("C", "Configuración", Incident::isConfigurationAffected);
+        Grid.Column<Incident> cS = addBoolColumn("S", "Script/BBDD", Incident::isDatabaseAffected);
+        Grid.Column<Incident> cCp = addBoolColumn("CP", "Casos de prueba", Incident::isTestCasesDone);
+        Grid.Column<Incident> cEv = addBoolColumn("EV", "Evidencias", Incident::isTestEvidenceDone);
 
         Grid.Column<Incident> cHours = grid.addColumn(
                         i -> Formats.hours(hoursByIncident.getOrDefault(i.getId(), BigDecimal.ZERO)))
@@ -274,11 +275,19 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         return link;
     }
 
-    private Grid.Column<Incident> addBoolColumn(String header,
+    private Grid.Column<Incident> addBoolColumn(String header, String tooltip,
             java.util.function.Predicate<Incident> flag) {
         return grid.addComponentColumn(i -> boolIcon(flag.test(i)))
-                .setHeader(header).setAutoWidth(true).setFlexGrow(0).setTextAlign(
-                        com.vaadin.flow.component.grid.ColumnTextAlign.CENTER);
+                .setHeader(headerWithTooltip(header, tooltip)).setAutoWidth(true).setFlexGrow(0)
+                .setTextAlign(com.vaadin.flow.component.grid.ColumnTextAlign.CENTER);
+    }
+
+    /** Cabecera de columna abreviada con un tooltip que explica su significado (la leyenda
+     * del pie ya lo dice, pero así se ve justo donde hace falta). */
+    private Component headerWithTooltip(String text, String tooltip) {
+        Span header = new Span(text);
+        Tooltip.forComponent(header).setText(tooltip);
+        return header;
     }
 
     private Component infoIcon(Incident incident) {
@@ -293,7 +302,6 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         Tooltip tooltip = Tooltip.forComponent(icon);
         tooltip.setText(text);
         tooltip.setPosition(Tooltip.TooltipPosition.START_TOP);
-        tooltip.setHoverDelay(400);
         return icon;
     }
 
@@ -377,10 +385,21 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
                 + "PRE: Probada PRE · | Ubicación — F: Frontend · B: Backend · C: Configuración · "
                 + "S: Script/BBDD | Pruebas — CP: Casos de prueba · EV: Evidencias");
         legend.getStyle().set("font-size", "0.75rem").set("color", "var(--vaadin-text-color-secondary, gray)");
-        VerticalLayout footer = new VerticalLayout(countLabel, legend, colorLegend());
+        VerticalLayout footer = new VerticalLayout(countLabel, legend, colorLegend(), copyright());
         footer.setPadding(false);
         footer.setSpacing(false);
         return footer;
+    }
+
+    /** Más discreto que la leyenda de arriba: usa el tono "disabled" del tema (más apagado
+     * que el "secondary" de la leyenda), pensado para pasar desapercibido. */
+    private Component copyright() {
+        Span copyright = new Span("© " + Year.now().getValue() + " DNA Desarrollos-NahuelAde");
+        copyright.getStyle()
+                .set("font-size", "0.7rem")
+                .set("color", "var(--vaadin-text-color-disabled, #aaaaaa)")
+                .set("margin-top", "0.5rem");
+        return copyright;
     }
 
     /** Resumen del significado de los colores de fila del listado, con el mismo aspecto
