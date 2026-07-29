@@ -15,7 +15,7 @@ public class CopyrightFooter extends Span {
         brand.getStyle().set("font-weight", "700").set("letter-spacing", "0.08em");
 
         add(new Span("© " + Year.now().getValue() + " "), brand,
-                new Span(" Desarrollos-NahuelAde"));
+                new Span(" Developments-NahuelAde"));
 
         getStyle()
                 .set("display", "block")
