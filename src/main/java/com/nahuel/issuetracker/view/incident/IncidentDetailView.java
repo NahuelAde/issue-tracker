@@ -16,6 +16,7 @@ import com.nahuel.issuetracker.service.IncidentService;
 import com.nahuel.issuetracker.service.SprintService;
 import com.nahuel.issuetracker.utils.Formats;
 import com.nahuel.issuetracker.utils.Notifications;
+import com.nahuel.issuetracker.view.CopyrightFooter;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -137,7 +138,7 @@ public class IncidentDetailView extends VerticalLayout
         setSizeFull();
         heading.addClassNames("aura-surface", "incident-heading");
         add(heading, buildMainData(), buildEvolution(), buildSummary(), newHint,
-                buildEntries(), buildResolutionTests(), buildActions());
+                buildEntries(), buildResolutionTests(), buildActions(), new CopyrightFooter());
         bindFields();
     }
 
@@ -290,7 +291,9 @@ public class IncidentDetailView extends VerticalLayout
         deleteButton.addClickListener(e -> confirmDeleteIncident());
 
         Button back = new Button("Volver", e -> goToList());
-        return new HorizontalLayout(save, closeButton, reopenButton, deleteButton, back);
+        HorizontalLayout actions = new HorizontalLayout(save, closeButton, reopenButton, deleteButton, back);
+        actions.getStyle().set("margin-bottom", "1rem");
+        return actions;
     }
 
     private void bindFields() {

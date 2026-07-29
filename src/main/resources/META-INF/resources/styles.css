@@ -69,13 +69,19 @@ vaadin-grid::part(header-cell) {
 }
 
 /* Tooltip del icono (i) del listado: ancho y multilínea (texto completo de cada
-   entrada). En esta app los tooltips son solo los iconos (i) del listado. */
+   entrada). El límite de ancho (::part(overlay)) es un max-width, inofensivo para
+   cualquier tooltip pequeño, así que se deja global. El ancho fijo (::part(content):
+   width) sí hay que acotarlo solo a este tooltip -- si no, se aplicaría también a los
+   tooltips cortos de las cabeceras del listado, estirándolos sin motivo. Se usa
+   [position="start-top"] porque es la única posición que se usa aquí y la propiedad
+   "position" se refleja como atributo HTML del propio componente (reflectToAttribute),
+   comprobado en el JS ya generado del componente. */
 vaadin-tooltip::part(overlay) {
     max-width: 80vw;
     max-height: 75vh;
 }
 
-vaadin-tooltip::part(content) {
+vaadin-tooltip[position="start-top"]::part(content) {
     white-space: pre-line;
     text-align: left;
     width: 78vw;

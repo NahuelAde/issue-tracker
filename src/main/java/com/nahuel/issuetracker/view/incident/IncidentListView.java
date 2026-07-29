@@ -13,6 +13,7 @@ import com.nahuel.issuetracker.service.IncidentService;
 import com.nahuel.issuetracker.service.SprintService;
 import com.nahuel.issuetracker.utils.Formats;
 import com.nahuel.issuetracker.utils.Notifications;
+import com.nahuel.issuetracker.view.CopyrightFooter;
 import com.nahuel.issuetracker.view.ProjectAware;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -36,7 +37,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.math.BigDecimal;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -385,21 +385,10 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
                 + "PRE: Probada PRE · | Ubicación — F: Frontend · B: Backend · C: Configuración · "
                 + "S: Script/BBDD | Pruebas — CP: Casos de prueba · EV: Evidencias");
         legend.getStyle().set("font-size", "0.75rem").set("color", "var(--vaadin-text-color-secondary, gray)");
-        VerticalLayout footer = new VerticalLayout(countLabel, legend, colorLegend(), copyright());
+        VerticalLayout footer = new VerticalLayout(countLabel, legend, colorLegend(), new CopyrightFooter());
         footer.setPadding(false);
         footer.setSpacing(false);
         return footer;
-    }
-
-    /** Más discreto que la leyenda de arriba: usa el tono "disabled" del tema (más apagado
-     * que el "secondary" de la leyenda), pensado para pasar desapercibido. */
-    private Component copyright() {
-        Span copyright = new Span("© " + Year.now().getValue() + " DNA Desarrollos-NahuelAde");
-        copyright.getStyle()
-                .set("font-size", "0.7rem")
-                .set("color", "var(--vaadin-text-color-disabled, #aaaaaa)")
-                .set("margin-top", "0.5rem");
-        return copyright;
     }
 
     /** Resumen del significado de los colores de fila del listado, con el mismo aspecto
