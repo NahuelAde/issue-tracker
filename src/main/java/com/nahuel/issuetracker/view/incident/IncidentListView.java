@@ -143,9 +143,6 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         statusFilter.setItemLabelGenerator(StatusFilterOption::label);
         statusFilter.setClearButtonVisible(true);
         statusFilter.setValue(StatusFilterOption.OPEN);
-        statusFilter.setTooltipText(
-                "\"Abiertas\" agrupa todo lo que no esté Cerrada; el aspa lo deja sin filtrar "
-                        + "(incluye cerradas)");
         statusFilter.addValueChangeListener(e -> onFilterChanged());
 
         priorityFilter.setPlaceholder("Prioridad");
@@ -182,15 +179,10 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         excludeSprintFilter.setPlaceholder("Excluir sprint");
         excludeSprintFilter.setItemLabelGenerator(Sprint::getName);
         excludeSprintFilter.setClearButtonVisible(true);
-        excludeSprintFilter.setTooltipText(
-                "Oculta las incidencias del sprint elegido; útil para planificar el siguiente "
-                        + "sprint sin ver las ya cerradas de uno anterior");
         excludeSprintFilter.addValueChangeListener(e -> onFilterChanged());
 
         Button clear = new Button("Limpiar filtros", e -> clearFilters());
 
-        extractHours.setTooltipText(
-                "Copia el identificador completo y las horas de las incidencias marcadas en la tabla");
         extractHours.setEnabled(false);
         extractHours.addClickListener(e -> openExtractHoursDialog());
 
