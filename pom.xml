@@ -4,7 +4,7 @@
     <!-- Project from https://start.vaadin.com/b14dab9f-f8d1-472c-92b4-9a8c0b23500b -->
     <groupId>com.nahuel</groupId>
     <artifactId>issue-tracker</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
     
     <properties>
