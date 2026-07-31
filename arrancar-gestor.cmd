@@ -8,12 +8,13 @@ echo   Gestor de incidencias
 echo   Se abrira http://localhost:58423 en unos segundos.
 echo   Cierra esta ventana para DETENER la aplicacion.
 echo ================================================
-if not exist "target\issue-tracker-1.2.1.jar" (
+if not exist "target\issue-tracker-1.2.2.jar" (
   echo.
   echo No se encuentra el JAR. Genera primero con: mvnw.cmd clean package
   echo.
   pause
   exit /b 1
 )
-start "" powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 10; Start-Process 'http://localhost:58423'"
-"%JAVA_HOME%\bin\java.exe" -jar "target\issue-tracker-1.2.1.jar"
+REM El propio programa abre el navegador solo al terminar de arrancar (BrowserLauncher);
+REM ya no hace falta el truco de PowerShell con espera a ciegas de antes.
+"%JAVA_HOME%\bin\java.exe" -jar "target\issue-tracker-1.2.2.jar"
