@@ -311,7 +311,10 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         }
         Icon icon = VaadinIcon.CHECK.create();
         icon.setSize("1rem");
-        icon.getStyle().set("color", "var(--vaadin-color-success, green)");
+        // "--vaadin-color-success" no existe en Aura (cae siempre al verde fijo del navegador),
+        // que coincide de hecho con el verde de las filas de sprint actual (incident-active-*),
+        // haciendo el tic casi invisible ahí. Verde oscuro/claro con más contraste de luminancia.
+        icon.getStyle().set("color", "light-dark(#1b4d1b, #bdf7ae)");
         return icon;
     }
 
@@ -325,10 +328,10 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         String background;
         String foreground;
         switch (priority) {
-            case URGENT -> { background = "#c40000"; foreground = "#ffffff"; }
-            case HIGH -> { background = "#ffc000"; foreground = "#3a2e00"; }
-            case MEDIUM -> { background = "#cbdff2"; foreground = "#1c4e80"; }
-            default -> { background = "#e2e2e2"; foreground = "#555555"; } // LOW
+            case URGENT -> { background = "light-dark(#c40000, #7a1414)"; foreground = "light-dark(#ffffff, #ffe5e5)"; }
+            case HIGH -> { background = "light-dark(#ffc000, #6b5000)"; foreground = "light-dark(#3a2e00, #ffe6a3)"; }
+            case MEDIUM -> { background = "light-dark(#cbdff2, #24425c)"; foreground = "light-dark(#1c4e80, #bfe0ff)"; }
+            default -> { background = "light-dark(#e2e2e2, #3d3d3d)"; foreground = "light-dark(#555555, #cfcfcf)"; } // LOW
         }
         Span badge = new Span(priority.getLabel());
         badge.getStyle()
@@ -397,16 +400,23 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
      * se reproducen para mostrarlos, siguiendo el orden de prioridad de {@link #rowBucket}. */
     private Component colorLegend() {
         HorizontalLayout legend = new HorizontalLayout(
-                colorChip("Bloqueada", "#f6d0d0", "#777"),
-                colorChip("Sprint actual · sin terminar", "#8dd873", "#000"),
-                colorChip("Sprint actual · terminada", "#d9f2d0", "#000"),
-                colorChip("Sprint actual · cerrada", "#eef7e8", "#888"),
-                colorChip("Sprint no activo · sin terminar", "#b8dcec", "#555"),
-                colorChip("Sprint no activo · terminada o cerrada", "#dceef7", "#777"),
-                colorChip("Cerrada, sin sprint", "#e4e4e4", "#666"),
-                colorChip("Sin sprint · terminada", "#ececec", "#c77b30"),
-                colorChip("Sin sprint · empezada", "#ffffff", "#c77b30"),
-                colorChip("Sin sprint · nueva", "#ffffff", "#9e9e9e"));
+                colorChip("Bloqueada", "light-dark(#f6d0d0, #5a2a2a)", "light-dark(#777, #e0b8b8)"),
+                colorChip("Sprint actual · sin terminar",
+                        "light-dark(#8dd873, #3f7a2e)", "light-dark(#000, #eaffe0)"),
+                colorChip("Sprint actual · terminada",
+                        "light-dark(#d9f2d0, #35502c)", "light-dark(#000, #d9f2d0)"),
+                colorChip("Sprint actual · cerrada",
+                        "light-dark(#eef7e8, #253c22)", "light-dark(#888, #9bb393)"),
+                colorChip("Sprint no activo · sin terminar",
+                        "light-dark(#b8dcec, #2f5770)", "light-dark(#555, #d3ecf7)"),
+                colorChip("Sprint no activo · terminada o cerrada",
+                        "light-dark(#dceef7, #26404f)", "light-dark(#777, #b9d8e8)"),
+                colorChip("Cerrada, sin sprint", "light-dark(#e4e4e4, #3a3a3a)", "light-dark(#666, #b5b5b5)"),
+                colorChip("Sin sprint · terminada",
+                        "light-dark(#ececec, #333333)", "light-dark(#c77b30, #e2a463)"),
+                colorChip("Sin sprint · empezada",
+                        "light-dark(#ffffff, #2a2a2a)", "light-dark(#c77b30, #e2a463)"),
+                colorChip("Sin sprint · nueva", "light-dark(#ffffff, #2a2a2a)", "light-dark(#9e9e9e, #b5b5b5)"));
         legend.getStyle().set("flex-wrap", "wrap").set("margin-top", "0.3rem");
         legend.setSpacing(false);
         legend.getStyle().set("gap", "0.4rem");
@@ -423,7 +433,7 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
                 .set("padding", "0.15rem 0.55rem")
                 .set("border-radius", "0.6rem")
                 .set("white-space", "nowrap")
-                .set("border", "1px solid rgba(0, 0, 0, 0.1)");
+                .set("border", "1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.18))");
         return chip;
     }
 

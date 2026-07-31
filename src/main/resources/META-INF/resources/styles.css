@@ -1,55 +1,55 @@
 /* Add your styles here */
 
 /*
- * Coloreado de filas del listado de incidencias (tema claro).
+ * Coloreado de filas del listado de incidencias (claro/oscuro con light-dark()).
  * Prioridad: bloqueada > cerrada > sprint activo > sprint no activo > sin sprint.
  */
 vaadin-grid::part(incident-blocked) {           /* Bloqueada */
-    background-color: #f6d0d0;
-    color: #777;
+    background-color: light-dark(#f6d0d0, #5a2a2a);
+    color: light-dark(#777, #e0b8b8);
 }
 
 vaadin-grid::part(incident-closed) {            /* Cerrada (estado) */
-    background-color: #e4e4e4;
-    color: #666;
+    background-color: light-dark(#e4e4e4, #3a3a3a);
+    color: light-dark(#666, #b5b5b5);
 }
 
 vaadin-grid::part(incident-active-finished) {   /* Sprint actual · terminada */
-    background-color: #d9f2d0;
-    color: #000;
+    background-color: light-dark(#d9f2d0, #35502c);
+    color: light-dark(#000, #d9f2d0);
 }
 
 vaadin-grid::part(incident-active-unfinished) { /* Sprint actual · sin terminar */
-    background-color: #8dd873;
-    color: #000;
+    background-color: light-dark(#8dd873, #3f7a2e);
+    color: light-dark(#000, #eaffe0);
 }
 
 vaadin-grid::part(incident-active-closed) {     /* Sprint actual · cerrada (no tocar) */
-    background-color: #eef7e8;
-    color: #888;
+    background-color: light-dark(#eef7e8, #253c22);
+    color: light-dark(#888, #9bb393);
 }
 
 vaadin-grid::part(incident-past-finished) {     /* Sprint no activo · terminada */
-    background-color: #dceef7;
-    color: #777;
+    background-color: light-dark(#dceef7, #26404f);
+    color: light-dark(#777, #b9d8e8);
 }
 
 vaadin-grid::part(incident-past-unfinished) {   /* Sprint no activo · sin terminar */
-    background-color: #b8dcec;
-    color: #555;
+    background-color: light-dark(#b8dcec, #2f5770);
+    color: light-dark(#555, #d3ecf7);
 }
 
 vaadin-grid::part(incident-nosprint-finished) { /* Sin sprint · terminada */
-    background-color: #ececec;
-    color: #c77b30;
+    background-color: light-dark(#ececec, #333333);
+    color: light-dark(#c77b30, #e2a463);
 }
 
 vaadin-grid::part(incident-nosprint-started) {  /* Sin sprint · empezada */
-    color: #c77b30;
+    color: light-dark(#c77b30, #e2a463);
 }
 
 vaadin-grid::part(incident-new) {               /* Sin sprint · nueva */
-    color: #9e9e9e;
+    color: light-dark(#9e9e9e, #b5b5b5);
 }
 
 /*
@@ -136,14 +136,61 @@ vaadin-tooltip[position="start-top"]::part(content) {
     color: var(--aura-accent-color);
 }
 
-/* Tarjeta del resumen en el detalle de la incidencia. */
+/* Tarjeta del resumen en el detalle de la incidencia.
+   IMPORTANTE: antes usaba "var(--vaadin-background-color-secondary, #f7f7f7)", pero esa
+   variable no existe en Aura (comprobado en la documentación de propiedades del tema), así
+   que siempre caía al literal #f7f7f7 (gris claro fijo); en modo oscuro el texto de dentro
+   hereda el color de texto de Aura (casi blanco) y quedaba casi ilegible. Se usa
+   "--vaadin-background-container", que sí existe y se adapta a claro/oscuro. */
 .incident-summary {
     border: 1px solid var(--vaadin-border-color, #e0e0e0);
     border-radius: 8px;
     padding: 0.75rem 1rem;
-    background: var(--vaadin-background-color-secondary, #f7f7f7);
+    background: var(--vaadin-background-container, #f7f7f7);
 }
 
 .incident-summary h3 {
     margin-top: 0;
+}
+
+/* Interruptor de modo claro/oscuro (cabecera, MainLayout): una "pastilla" con un círculo
+   que se desplaza a un lado u otro. Se construye sobre un <button> nativo (accesible por
+   teclado y con foco de serie) en vez de un <div>, despojado de su apariencia por defecto. */
+.theme-toggle {
+    position: relative;
+    box-sizing: border-box;
+    width: 2.75rem;
+    height: 1.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background-color: light-dark(#c9c9c9, #4a4a4a);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background-color: light-dark(#bcbcbc, #5a5a5a);
+}
+
+.theme-toggle.theme-toggle-dark {
+    background-color: var(--aura-accent-color, #1c4e80);
+}
+
+.theme-toggle-thumb {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+    pointer-events: none;
+}
+
+.theme-toggle.theme-toggle-dark .theme-toggle-thumb {
+    transform: translateX(1.25rem);
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
 public class SettingService {
 
     public static final String LAST_PROJECT_ID = "lastProjectId";
+    public static final String DARK_MODE = "darkMode";
 
     private final AppSettingRepository repository;
 

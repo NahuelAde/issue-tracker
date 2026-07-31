@@ -13,10 +13,14 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.page.ColorScheme;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.router.Layout;
 
 import java.util.List;
@@ -33,13 +37,18 @@ public class MainLayout extends AppLayout {
     private final SettingService settingService;
     private final CurrentProject currentProject;
     private final ComboBox<Project> projectSelector = new ComboBox<>();
+    private final NativeButton themeToggle = new NativeButton();
+    private final Tooltip themeToggleTooltip = Tooltip.forComponent(themeToggle);
+    private boolean darkMode;
 
     public MainLayout(ProjectService projectService, SettingService settingService,
             CurrentProject currentProject) {
         this.projectService = projectService;
         this.settingService = settingService;
         this.currentProject = currentProject;
+        this.darkMode = Boolean.parseBoolean(settingService.get(SettingService.DARK_MODE).orElse("false"));
         addToNavbar(createHeader());
+        applyColorScheme();
         refreshProjectSelector();
     }
 
@@ -69,12 +78,41 @@ public class MainLayout extends AppLayout {
                 e -> UI.getCurrent().navigate(SprintManagementView.class));
 
         HorizontalLayout header = new HorizontalLayout(
-                homeLink, projectSelector, addProject, manageProjects, manageSprints);
+                homeLink, projectSelector, addProject, manageProjects, manageSprints, createThemeToggle());
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidthFull();
         header.getStyle().set("padding", "0 var(--vaadin-padding-m)");
         header.expand(homeLink);
         return header;
+    }
+
+    /** Interruptor claro/oscuro de la cabecera: una "pastilla" con un círculo que se
+     * desplaza a un lado u otro, en vez de un botón con icono. */
+    private NativeButton createThemeToggle() {
+        Span thumb = new Span();
+        thumb.addClassName("theme-toggle-thumb");
+        themeToggle.addClassName("theme-toggle");
+        themeToggle.setAriaLabel("Cambiar entre modo claro y oscuro");
+        themeToggle.add(thumb);
+        themeToggle.addClickListener(e -> toggleDarkMode());
+        updateThemeToggleState();
+        return themeToggle;
+    }
+
+    private void toggleDarkMode() {
+        darkMode = !darkMode;
+        settingService.set(SettingService.DARK_MODE, String.valueOf(darkMode));
+        applyColorScheme();
+        updateThemeToggleState();
+    }
+
+    private void applyColorScheme() {
+        UI.getCurrent().getPage().setColorScheme(darkMode ? ColorScheme.Value.DARK : ColorScheme.Value.LIGHT);
+    }
+
+    private void updateThemeToggleState() {
+        themeToggle.getClassNames().set("theme-toggle-dark", darkMode);
+        themeToggleTooltip.setText(darkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
     }
 
     /**
