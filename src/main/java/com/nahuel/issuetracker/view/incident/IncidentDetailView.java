@@ -137,8 +137,17 @@ public class IncidentDetailView extends VerticalLayout
         this.currentProject = currentProject;
         setSizeFull();
         heading.addClassNames("aura-surface", "incident-heading");
-        add(heading, buildMainData(), buildEvolution(), buildSummary(), newHint,
-                buildEntries(), buildResolutionTests(), buildActions(), new CopyrightFooter());
+
+        // El contenido puede ser largo (varias entradas); se desplaza por dentro de este
+        // contenedor, dejando fijos fuera los botones y el copyright (igual que en el
+        // listado, donde la leyenda y el copyright quedan fijos bajo el grid).
+        VerticalLayout scrollableContent = new VerticalLayout(heading, buildMainData(),
+                buildEvolution(), buildSummary(), newHint, buildEntries(), buildResolutionTests());
+        scrollableContent.setPadding(false);
+        scrollableContent.getStyle().set("overflow-y", "auto");
+
+        add(scrollableContent, buildActions(), new CopyrightFooter());
+        expand(scrollableContent);
         bindFields();
     }
 
