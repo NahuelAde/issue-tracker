@@ -32,7 +32,7 @@ cronológico, horas y sprints. Interfaz en español; UI en Java con Vaadin Flow.
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"
 .\mvnw.cmd spring-boot:run
 ```
-La aplicación abre en **http://localhost:5555**.
+La aplicación abre en **http://localhost:58423**.
 
 ### Generar el JAR ejecutable
 ```powershell
@@ -46,7 +46,7 @@ compilado en modo producción).
 ```powershell
 & "C:\Program Files\Java\jdk-21\bin\java.exe" -jar target\issue-tracker-<versión>.jar
 ```
-Abre en **http://localhost:5555**.
+Abre en **http://localhost:58423**.
 
 ### Acceso directo (Windows)
 Hay un lanzador `arrancar-gestor.cmd` en la raíz del proyecto que ejecuta el JAR con JDK 21 y abre el
