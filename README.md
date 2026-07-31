@@ -39,11 +39,12 @@ La aplicación abre en **http://localhost:5555**.
 $env:JAVA_HOME="C:\Program Files\Java\jdk-21"
 .\mvnw.cmd clean package
 ```
-Genera `target\issue-tracker-1.0.0.jar` (incluye el frontend compilado en modo producción).
+Genera `target\issue-tracker-<versión>.jar` (versión tomada de `pom.xml`; incluye el frontend
+compilado en modo producción).
 
 ### Ejecutar el JAR
 ```powershell
-& "C:\Program Files\Java\jdk-21\bin\java.exe" -jar target\issue-tracker-1.0.0.jar
+& "C:\Program Files\Java\jdk-21\bin\java.exe" -jar target\issue-tracker-<versión>.jar
 ```
 Abre en **http://localhost:5555**.
 
