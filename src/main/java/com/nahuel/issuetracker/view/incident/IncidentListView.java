@@ -23,12 +23,16 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
+import com.vaadin.flow.component.popover.PopoverPosition;
+import com.vaadin.flow.component.popover.PopoverVariant;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -298,11 +302,30 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         Icon icon = VaadinIcon.INFO_CIRCLE_O.create();
         icon.setSize("1.1rem");
         icon.getStyle().set("color", "var(--vaadin-text-color-secondary, gray)").set("cursor", "help");
+        icon.getElement().setAttribute("aria-label", "Ver seguimiento de la incidencia");
+        icon.getElement().setAttribute("tabindex", "0");
 
-        Tooltip tooltip = Tooltip.forComponent(icon);
-        tooltip.setText(text);
-        tooltip.setPosition(Tooltip.TooltipPosition.START_TOP);
-        return icon;
+        Div entries = new Div();
+        entries.addClassName("incident-entry-popover");
+        for (String entryText : text.split("\\R\\R")) {
+            Div entry = new Div();
+            entry.addClassName("incident-entry-popover-row");
+            entry.setText(entryText);
+            entries.add(entry);
+        }
+
+        Popover popover = new Popover(entries);
+        popover.setTarget(icon);
+        popover.setPosition(PopoverPosition.START_TOP);
+        popover.setOpenOnHover(true);
+        popover.setOpenOnFocus(true);
+        popover.setOpenOnClick(true);
+        popover.setWidth("min(78vw, 60rem)");
+        popover.addThemeVariants(PopoverVariant.NO_PADDING);
+
+        Div wrapper = new Div(icon, popover);
+        wrapper.getStyle().set("display", "inline-flex");
+        return wrapper;
     }
 
     private Component boolIcon(boolean value) {

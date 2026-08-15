@@ -89,6 +89,29 @@ vaadin-tooltip[position="start-top"]::part(content) {
     overflow: auto;
 }
 
+/* Seguimiento del icono de informaciÃ³n: cada entrada es un bloque independiente para
+   facilitar la lectura, con fondos alternos que tambiÃ©n conservan contraste en modo oscuro. */
+.incident-entry-popover {
+    max-height: 72vh;
+    overflow: auto;
+}
+
+.incident-entry-popover-row {
+    box-sizing: border-box;
+    padding: 0.65rem 0.8rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background-color: light-dark(#ffffff, #292929);
+}
+
+.incident-entry-popover-row:nth-child(even) {
+    background-color: light-dark(#eef3f7, #363c42);
+}
+
+.incident-entry-popover-row + .incident-entry-popover-row {
+    border-top: 1px solid var(--vaadin-border-color-secondary, #d8d8d8);
+}
+
 /* Botón "Gestor de incidencias" de la cabecera (MainLayout): distintivo y llamativo, con
    icono de llave fija, mayúsculas y una ligera animación al pasar el ratón.
    IMPORTANTE: vaadin-button pinta su fondo/texto dentro de su shadow DOM a partir de las

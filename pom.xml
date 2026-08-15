@@ -4,7 +4,7 @@
     <!-- Project from https://start.vaadin.com/b14dab9f-f8d1-472c-92b4-9a8c0b23500b -->
     <groupId>com.nahuel</groupId>
     <artifactId>issue-tracker</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <packaging>jar</packaging>
     
     <properties>
@@ -89,6 +89,24 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xshare:off -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.vaadin</groupId>

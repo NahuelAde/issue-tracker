@@ -19,4 +19,5 @@ vite.generated.ts
 
 # Documentación interna de trabajo (no se publica; queda en local)
 /CLAUDE.md
+/AGENTS.md
 /docs/
