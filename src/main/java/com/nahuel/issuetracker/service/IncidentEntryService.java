@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,12 +63,14 @@ public class IncidentEntryService {
     }
 
     /**
-     * A per-incident multi-line summary of all its entries (date · type · excerpt),
-     * oldest first, for the list tooltip. Single query to avoid N+1.
+     * A per-incident list of entry summaries (date · type · excerpt), oldest first,
+     * for the list tooltip. Each element is one entry, kept separate from the rest
+     * so a blank line inside a single entry's description (a paragraph break, not a
+     * boundary between entries) never gets mistaken for one. Single query to avoid N+1.
      */
     @Transactional(readOnly = true)
-    public Map<Long, String> entriesTooltipByProject(Project project) {
-        Map<Long, StringBuilder> builders = new LinkedHashMap<>();
+    public Map<Long, List<String>> entriesTooltipByProject(Project project) {
+        Map<Long, List<String>> result = new LinkedHashMap<>();
         for (Object[] row : repository.findEntrySummariesByProject(project)) {
             Long incidentId = (Long) row[0];
             LocalDate date = (LocalDate) row[1];
@@ -76,17 +79,9 @@ public class IncidentEntryService {
             String header = Formats.date(date)
                     + " · " + (entryType == null ? "" : entryType.getLabel());
             String body = description == null ? "" : description.strip();
-            StringBuilder sb = builders.computeIfAbsent(incidentId, k -> new StringBuilder());
-            if (!sb.isEmpty()) {
-                sb.append("\n\n");
-            }
-            sb.append(header);
-            if (!body.isEmpty()) {
-                sb.append("\n").append(body);
-            }
+            String entryText = body.isEmpty() ? header : header + "\n" + body;
+            result.computeIfAbsent(incidentId, k -> new ArrayList<>()).add(entryText);
         }
-        Map<Long, String> result = new HashMap<>();
-        builders.forEach((id, sb) -> result.put(id, sb.toString()));
         return result;
     }
 

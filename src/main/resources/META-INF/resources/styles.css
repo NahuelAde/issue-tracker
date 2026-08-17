@@ -68,34 +68,33 @@ vaadin-grid::part(header-cell) {
     text-align: center;
 }
 
-/* Tooltip del icono (i) del listado: ancho y multilínea (texto completo de cada
-   entrada). El límite de ancho (::part(overlay)) es un max-width, inofensivo para
-   cualquier tooltip pequeño, así que se deja global. El ancho fijo (::part(content):
-   width) sí hay que acotarlo solo a este tooltip -- si no, se aplicaría también a los
-   tooltips cortos de las cabeceras del listado, estirándolos sin motivo. Se usa
-   [position="start-top"] porque es la única posición que se usa aquí y la propiedad
-   "position" se refleja como atributo HTML del propio componente (reflectToAttribute),
-   comprobado en el JS ya generado del componente. */
+/* Límite de tamaño de los tooltips cortos (cabeceras del listado, interruptor de modo
+   oscuro): un max-width/max-height generoso e inofensivo, ya que su contenido siempre
+   es breve. El popover de seguimiento del icono (i) NO es un vaadin-tooltip (es un
+   Popover, ver infoIcon() en IncidentListView), así que su tamaño se controla aparte,
+   con vaadin-popover-overlay más abajo. */
 vaadin-tooltip::part(overlay) {
     max-width: 80vw;
     max-height: 75vh;
 }
 
-vaadin-tooltip[position="start-top"]::part(content) {
-    white-space: pre-line;
-    text-align: left;
-    width: 78vw;
-    max-height: 72vh;
-    overflow: auto;
+/* Alto máximo del popover de seguimiento del icono (i), con scroll propio a partir de
+   ahí. IMPORTANTE: <vaadin-popover> en la página es solo un controlador invisible; el
+   overlay que realmente se ve es otro elemento aparte, <vaadin-popover-overlay>,
+   creado aparte en el DOM (confirmado en el código fuente del paquete @vaadin/popover)
+   -- por eso el límite se pone aquí y no vía popover.setHeight()/getStyle() (que de
+   hecho lanza UnsupportedOperationException) ni vía una clase en el propio Popover.
+   Su ::part(content) ya trae overflow:auto de fábrica, pero max-height:100%, que no
+   limita nada si ningún antecesor tiene un alto definido (nuestro caso, ya que no fijamos
+   altura en el Popover para que se ajuste a pocas entradas); por eso hace falta fijar
+   aquí un valor absoluto. */
+vaadin-popover-overlay::part(content) {
+    max-height: 85vh;
 }
 
-/* Seguimiento del icono de informaciÃ³n: cada entrada es un bloque independiente para
-   facilitar la lectura, con fondos alternos que tambiÃ©n conservan contraste en modo oscuro. */
-.incident-entry-popover {
-    max-height: 72vh;
-    overflow: auto;
-}
-
+/* Seguimiento del icono de información: cada entrada es un bloque independiente para
+   facilitar la lectura, con fondos alternos que también conservan contraste en modo
+   oscuro. */
 .incident-entry-popover-row {
     box-sizing: border-box;
     padding: 0.65rem 0.8rem;

@@ -94,7 +94,7 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
     private final IncidentFilterState filterState;
 
     private Map<Long, BigDecimal> hoursByIncident = Map.of();
-    private Map<Long, String> tooltipByIncident = Map.of();
+    private Map<Long, List<String>> tooltipByIncident = Map.of();
     private Long currentSprintId;
     private List<Sprint> sprints = List.of();
     private boolean restoring;
@@ -295,8 +295,8 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
     }
 
     private Component infoIcon(Incident incident) {
-        String text = tooltipByIncident.get(incident.getId());
-        if (text == null || text.isBlank()) {
+        List<String> entryTexts = tooltipByIncident.get(incident.getId());
+        if (entryTexts == null || entryTexts.isEmpty()) {
             return new Span();
         }
         Icon icon = VaadinIcon.INFO_CIRCLE_O.create();
@@ -307,7 +307,7 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
 
         Div entries = new Div();
         entries.addClassName("incident-entry-popover");
-        for (String entryText : text.split("\\R\\R")) {
+        for (String entryText : entryTexts) {
             Div entry = new Div();
             entry.addClassName("incident-entry-popover-row");
             entry.setText(entryText);
@@ -320,7 +320,7 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         popover.setOpenOnHover(true);
         popover.setOpenOnFocus(true);
         popover.setOpenOnClick(true);
-        popover.setWidth("min(78vw, 60rem)");
+        popover.setWidth("90vw");
         popover.addThemeVariants(PopoverVariant.NO_PADDING);
 
         Div wrapper = new Div(icon, popover);
