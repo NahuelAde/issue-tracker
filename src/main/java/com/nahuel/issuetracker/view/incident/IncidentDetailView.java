@@ -194,6 +194,7 @@ public class IncidentDetailView extends VerticalLayout
 
         FormLayout form = new FormLayout();
         H3 sectionTitle = new H3("Datos principales");
+        sectionTitle.addClassName("incident-main-data-title");
         form.add(sectionTitle);
         form.setColspan(sectionTitle, 2);
         form.add(projectField, code, title, category, type, assignee, status, priority,

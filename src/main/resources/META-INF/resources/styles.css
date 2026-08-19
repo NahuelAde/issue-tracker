@@ -158,6 +158,11 @@ vaadin-popover-overlay::part(content) {
     color: var(--aura-accent-color);
 }
 
+/* Evita que el primer título del contenido desplazable quede recortado por arriba. */
+.incident-main-data-title {
+    padding-top: 0.25rem;
+}
+
 /* Tarjeta del resumen en el detalle de la incidencia.
    IMPORTANTE: antes usaba "var(--vaadin-background-color-secondary, #f7f7f7)", pero esa
    variable no existe en Aura (comprobado en la documentación de propiedades del tema), así
