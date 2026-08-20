@@ -236,15 +236,15 @@ public class IncidentDetailView extends VerticalLayout
     }
 
     private VerticalLayout buildEntries() {
-        entriesGrid.addColumn(e -> Formats.date(e.getEntryDate())).setHeader("Fecha").setAutoWidth(true);
+        entriesGrid.addColumn(e -> Formats.date(e.getEntryDate())).setHeader("Fecha").setAutoWidth(true).setFlexGrow(0);
         entriesGrid.addColumn(e -> e.getEntryType() == null ? "" : e.getEntryType().getLabel())
-                .setHeader("Tipo").setAutoWidth(true);
+                .setHeader("Tipo").setAutoWidth(true).setFlexGrow(0);
         entriesGrid.addColumn(e -> e.getEnvironment() == null ? "" : e.getEnvironment().getLabel())
-                .setHeader("Entorno").setAutoWidth(true);
-        entriesGrid.addColumn(IncidentDetailView::versionsLabel).setHeader("Versión").setAutoWidth(true);
-        entriesGrid.addColumn(e -> Formats.hours(e.getHours())).setHeader("Horas").setAutoWidth(true);
-        entriesGrid.addColumn(e -> excerpt(e.getDescription(), 80)).setHeader("Descripción").setFlexGrow(1);
-        entriesGrid.addComponentColumn(this::entryActions).setHeader("Acciones").setAutoWidth(true);
+                .setHeader("Entorno").setAutoWidth(true).setFlexGrow(0);
+        entriesGrid.addColumn(IncidentDetailView::versionsLabel).setHeader("Versión").setAutoWidth(true).setFlexGrow(0);
+        entriesGrid.addColumn(e -> Formats.hours(e.getHours())).setHeader("Horas").setAutoWidth(true).setFlexGrow(0);
+        entriesGrid.addColumn(e -> e.getDescription() == null ? "" : e.getDescription()).setHeader("Descripción").setFlexGrow(1);
+        entriesGrid.addComponentColumn(this::entryActions).setHeader("Acciones").setAutoWidth(true).setFlexGrow(0);
         // Acordeón: al hacer clic en la fila se despliega la descripción completa.
         entriesGrid.setItemDetailsRenderer(new ComponentRenderer<>(entry -> {
             Div detail = new Div();

@@ -49,14 +49,14 @@ public class ProjectManagementView extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.addColumn(Project::getCode).setHeader("Código").setAutoWidth(true);
-        grid.addColumn(Project::getName).setHeader("Nombre").setAutoWidth(true);
+        grid.addColumn(Project::getCode).setHeader("Código").setAutoWidth(true).setFlexGrow(0);
+        grid.addColumn(Project::getName).setHeader("Nombre").setAutoWidth(true).setFlexGrow(0);
         grid.addColumn(Project::getDescription).setHeader("Descripción").setFlexGrow(1);
         grid.addColumn(project -> project.isActive() ? "Activo" : "Inactivo")
-                .setHeader("Estado").setAutoWidth(true);
+                .setHeader("Estado").setAutoWidth(true).setFlexGrow(0);
         grid.addColumn(project -> incidentService.countByProject(project))
-                .setHeader("Incidencias").setAutoWidth(true);
-        grid.addComponentColumn(this::buildActions).setHeader("Acciones").setAutoWidth(true);
+                .setHeader("Incidencias").setAutoWidth(true).setFlexGrow(0);
+        grid.addComponentColumn(this::buildActions).setHeader("Acciones").setAutoWidth(true).setFlexGrow(0);
         grid.setSizeFull();
     }
 

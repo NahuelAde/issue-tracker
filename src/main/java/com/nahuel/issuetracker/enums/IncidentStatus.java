@@ -10,9 +10,9 @@ public enum IncidentStatus {
     PENDING("Pendiente"),
     IN_PROGRESS("En curso"),
     IN_TESTING("En pruebas"),
-    WAITING_CLIENT("Pendiente del cliente"),
-    READY_FOR_PRE("Preparada para PRE"),
-    READY_FOR_PRO("Preparada para PRO"),
+    WAITING_CLIENT("Pdte cliente"),
+    READY_FOR_PRE("PRE"),
+    READY_FOR_PRO("PRO"),
     CLOSED("Cerrada");
 
     private final String label;
