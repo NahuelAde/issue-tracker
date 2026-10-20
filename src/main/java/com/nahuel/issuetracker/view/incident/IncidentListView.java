@@ -41,6 +41,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -147,7 +148,6 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         statusFilter.setItems(statusFilterOptions());
         statusFilter.setItemLabelGenerator(StatusFilterOption::label);
         statusFilter.setClearButtonVisible(true);
-        statusFilter.setValue(StatusFilterOption.OPEN);
         statusFilter.addValueChangeListener(e -> onFilterChanged());
 
         priorityFilter.setPlaceholder("Prioridad");
@@ -169,7 +169,12 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         sprintFilter.setPlaceholder("Sprint");
         sprintFilter.setItemLabelGenerator(Sprint::getName);
         sprintFilter.setClearButtonVisible(true);
-        sprintFilter.addValueChangeListener(e -> onFilterChanged());
+        sprintFilter.addValueChangeListener(e -> {
+            if (!restoring) {
+                filterState.setSprintFilterCustomized(true);
+            }
+            onFilterChanged();
+        });
 
         typeFilter.setPlaceholder("Tipo");
         typeFilter.setItems(IncidentType.values());
@@ -516,10 +521,11 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
     private void clearFilters() {
         restoring = true;
         search.clear();
-        statusFilter.setValue(StatusFilterOption.OPEN);
+        statusFilter.clear();
         priorityFilter.clear();
         categoryFilter.clear();
-        sprintFilter.clear();
+        sprintFilter.setValue(findCurrentSprint());
+        filterState.setSprintFilterCustomized(false);
         typeFilter.clear();
         assigneeFilter.clear();
         excludeSprintFilter.clear();
@@ -549,7 +555,9 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         statusFilter.setValue(decodeStatusOption(filterState.getStatusFilter()));
         priorityFilter.setValue(filterState.getPriority());
         categoryFilter.setValue(filterState.getCategory());
-        sprintFilter.setValue(findSprintById(filterState.getSprintId()));
+        boolean sprintFilterCustomized = filterState.isSprintFilterCustomized();
+        sprintFilter.setValue(sprintFilterCustomized
+                ? findSprintById(filterState.getSprintId()) : findCurrentSprint());
         typeFilter.setValue(filterState.getType());
         assigneeFilter.setValue(filterState.getAssignee());
         excludeSprintFilter.setValue(findSprintById(filterState.getExcludeSprintId()));
@@ -611,6 +619,17 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         return sprints.stream().filter(s -> id.equals(s.getId())).findFirst().orElse(null);
     }
 
+    /** Returns the active sprint whose date range includes today, from the loaded project sprints. */
+    private Sprint findCurrentSprint() {
+        LocalDate today = LocalDate.now();
+        return sprints.stream()
+                .filter(Sprint::isActive)
+                .filter(sprint -> !sprint.getStartDate().isAfter(today)
+                        && !sprint.getEndDate().isBefore(today))
+                .max(Comparator.comparing(Sprint::getStartDate))
+                .orElse(null);
+    }
+
     /** Nombre del sprint de la incidencia, o cadena vacía si no tiene. Evita tocar la
      * asociación LAZY más allá de su id (fuera de transacción), resolviendo el nombre
      * contra la lista de sprints del proyecto ya cargada. */
@@ -650,9 +669,8 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
             countLabel.setText("Selecciona o crea un proyecto para ver sus incidencias.");
             return;
         }
-        currentSprintId = sprintService.findCurrent(project).map(Sprint::getId).orElse(null);
-        hoursByIncident = entryService.hoursByProject(project);
-        tooltipByIncident = entryService.entriesTooltipByProject(project);
+        Sprint currentSprint = findCurrentSprint();
+        currentSprintId = currentSprint == null ? null : currentSprint.getId();
         StatusFilterOption selectedStatus = statusFilter.getValue();
         IncidentStatus statusParam = selectedStatus == null ? null : selectedStatus.status();
         boolean onlyOpenParam = selectedStatus != null && selectedStatus.openAggregate();
@@ -674,6 +692,9 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
                 .comparingInt((Incident i) -> isInActiveSprint(i) ? 0 : 1)
                 .thenComparing(i -> i.getCode() == null ? "" : i.getCode(),
                         String.CASE_INSENSITIVE_ORDER));
+        IncidentEntryService.Overview overview = entryService.overviewByIncidents(items);
+        hoursByIncident = overview.hoursByIncident();
+        tooltipByIncident = overview.tooltipsByIncident();
         grid.setItems(items);
         countLabel.setText(items.size() + (items.size() == 1 ? " incidencia" : " incidencias"));
         extractHours.setEnabled(!grid.getSelectedItems().isEmpty());
@@ -686,7 +707,8 @@ public class IncidentListView extends VerticalLayout implements ProjectAware {
         updateSprintFilter();
         updateAssigneeFilter();
         categoryFilter.clear();
-        sprintFilter.clear();
+        sprintFilter.setValue(findCurrentSprint());
+        filterState.setSprintFilterCustomized(false);
         assigneeFilter.clear();
         excludeSprintFilter.clear();
         restoring = false;

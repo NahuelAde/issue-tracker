@@ -2,7 +2,6 @@ package com.nahuel.issuetracker.service;
 
 import com.nahuel.issuetracker.entity.Incident;
 import com.nahuel.issuetracker.entity.IncidentEntry;
-import com.nahuel.issuetracker.entity.Project;
 import com.nahuel.issuetracker.enums.IncidentEntryType;
 import com.nahuel.issuetracker.repository.IncidentEntryRepository;
 import com.nahuel.issuetracker.utils.Formats;
@@ -25,6 +24,10 @@ import java.util.Optional;
 @Service
 @Transactional
 public class IncidentEntryService {
+
+    public record Overview(Map<Long, BigDecimal> hoursByIncident,
+                           Map<Long, List<String>> tooltipsByIncident) {
+    }
 
     private final IncidentEntryRepository repository;
 
@@ -52,37 +55,30 @@ public class IncidentEntryService {
         return repository.findFirstByIncidentAndEntryTypeOrderByEntryDateDescCreatedAtDesc(incident, type);
     }
 
-    /** Total hours per incident id for a whole project, in a single query (avoids N+1). */
+    /** Loads hours and tooltip entries for displayed incidents in a single query. */
     @Transactional(readOnly = true)
-    public Map<Long, BigDecimal> hoursByProject(Project project) {
-        Map<Long, BigDecimal> result = new HashMap<>();
-        for (Object[] row : repository.sumHoursByProject(project)) {
-            result.put((Long) row[0], (BigDecimal) row[1]);
+    public Overview overviewByIncidents(List<Incident> incidents) {
+        if (incidents.isEmpty()) {
+            return new Overview(Map.of(), Map.of());
         }
-        return result;
-    }
 
-    /**
-     * A per-incident list of entry summaries (date · type · excerpt), oldest first,
-     * for the list tooltip. Each element is one entry, kept separate from the rest
-     * so a blank line inside a single entry's description (a paragraph break, not a
-     * boundary between entries) never gets mistaken for one. Single query to avoid N+1.
-     */
-    @Transactional(readOnly = true)
-    public Map<Long, List<String>> entriesTooltipByProject(Project project) {
-        Map<Long, List<String>> result = new LinkedHashMap<>();
-        for (Object[] row : repository.findEntrySummariesByProject(project)) {
+        Map<Long, BigDecimal> hoursByIncident = new HashMap<>();
+        Map<Long, List<String>> tooltipsByIncident = new LinkedHashMap<>();
+        List<Long> incidentIds = incidents.stream().map(Incident::getId).toList();
+        for (Object[] row : repository.findSummariesByIncidentIds(incidentIds)) {
             Long incidentId = (Long) row[0];
             LocalDate date = (LocalDate) row[1];
             IncidentEntryType entryType = (IncidentEntryType) row[2];
             String description = (String) row[3];
+            BigDecimal hours = (BigDecimal) row[4];
+            hoursByIncident.merge(incidentId, hours == null ? BigDecimal.ZERO : hours, BigDecimal::add);
             String header = Formats.date(date)
                     + " · " + (entryType == null ? "" : entryType.getLabel());
             String body = description == null ? "" : description.strip();
             String entryText = body.isEmpty() ? header : header + "\n" + body;
-            result.computeIfAbsent(incidentId, k -> new ArrayList<>()).add(entryText);
+            tooltipsByIncident.computeIfAbsent(incidentId, k -> new ArrayList<>()).add(entryText);
         }
-        return result;
+        return new Overview(hoursByIncident, tooltipsByIncident);
     }
 
     public IncidentEntry save(IncidentEntry entry) {

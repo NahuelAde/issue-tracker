@@ -19,7 +19,7 @@ public class IncidentFilterState implements Serializable {
     private String searchText;
     /** "OPEN" (agregado "Abiertas"), el nombre de un {@code IncidentStatus}, o null (sin
      * filtrar). Sustituye a los antiguos campos separados {@code status} y {@code onlyOpen}. */
-    private String statusFilter = "OPEN";
+    private String statusFilter;
     private IncidentPriority priority;
     private String category;
     private Long sprintId;
@@ -27,6 +27,7 @@ public class IncidentFilterState implements Serializable {
     private String assignee;
     private Long excludeSprintId;
     private String developmentPhase;
+    private boolean sprintFilterCustomized;
 
     public String getSearchText() {
         return searchText;
@@ -66,6 +67,14 @@ public class IncidentFilterState implements Serializable {
 
     public void setSprintId(Long sprintId) {
         this.sprintId = sprintId;
+    }
+
+    public boolean isSprintFilterCustomized() {
+        return sprintFilterCustomized;
+    }
+
+    public void setSprintFilterCustomized(boolean sprintFilterCustomized) {
+        this.sprintFilterCustomized = sprintFilterCustomized;
     }
 
     public IncidentType getType() {
